@@ -35,9 +35,17 @@ Add the following to your flake.nix:
 
 ## Copyrights
 
-The code in this repository is a direct fork of <https://github.com/mrquincle/yoga-900-auto-rotate> modified to work with NixOS.
-This code is created using the example code by Bastien Nocera from the monitor-sensor.c example at <https://github.com/hadess/iio-sensor-proxy>.
+The code in this repository is a direct fork of
+<https://github.com/mrquincle/yoga-900-auto-rotate> modified to work with
+NixOS.
+
+This code is created using the example code by Bastien Nocera from the
+monitor-sensor.c example at <https://github.com/hadess/iio-sensor-proxy>.
+
 It is adjusted for auto-rotate functionality on Yoga 900 by Anne van Rossum.
-It is subsequently adjusted on request to rotate any touch device by Anne van Rossum using code from Shih-Yuan Lee at <https://github.com/fourdollars/x11-touchscreen-calibrator>.
+
+It is subsequently adjusted on request to rotate any touch device by Anne van
+Rossum using code from Shih-Yuan Lee at
+<https://github.com/fourdollars/x11-touchscreen-calibrator>.
 
 Licence: GPLv3.
