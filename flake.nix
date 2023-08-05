@@ -35,37 +35,40 @@
         };
       }
       ) // {
-        nixosModules.xrandr-auto-rotate = { config, pkgs, lib, ... }: with lib; {
-          options = {
-            services.xrandr-auto-rotate = {
-              enable = mkEnableOption "xrandr-auto-rotate";
-              display = mkOption {
-                type = types.str;
-                default = ":0";
-                description = "The X display to use";
+        nixosModules = rec {
+          xrandr-auto-rotate = { config, pkgs, lib, ... }: with lib; {
+            options = {
+              services.xrandr-auto-rotate = {
+                enable = mkEnableOption "xrandr-auto-rotate";
+                display = mkOption {
+                  type = types.str;
+                  default = ":0";
+                  description = "The X display to use";
+                };
+              };
+            };
+            config = let
+              cfg = config.services.xrandr-auto-rotate;
+            in {
+              systemd.user.services.xrandr-auto-rotate = mkIf cfg.enable {
+                description = "Autorotation by coupling iio-sensor-proxy with xrandr";
+
+                serviceConfig = let
+                  pkg = self.packages.${pkgs.system}.default;
+                in {
+                  Type = "forking";
+                  ExecStart = "${pkg}/bin/xrandr-auto-rotate";
+                };
+
+                environment = {
+                  DISPLAY = cfg.display;
+                };
+
+                wantedBy = [ "graphical-session.target" ];
               };
             };
           };
-          config = let
-            cfg = config.services.xrandr-auto-rotate;
-          in {
-            systemd.user.services.xrandr-auto-rotate = mkIf cfg.enable {
-              description = "Autorotation by coupling iio-sensor-proxy with xrandr";
-
-              serviceConfig = let
-                pkg = self.packages.${pkgs.system}.default;
-              in {
-                Type = "forking";
-                ExecStart = "${pkg}/bin/xrandr-auto-rotate";
-              };
-
-              environment = {
-                DISPLAY = cfg.display;
-              };
-
-              wantedBy = [ "graphical-session.target" ];
-            };
-          };
+          default = xrandr-auto-rotate;
         };
       };
 }
