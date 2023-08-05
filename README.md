@@ -1,86 +1,44 @@
 # What does this do?
 
-This code implements auto-rotate functionality on the Yoga 900 by coupling iio-sensor-proxy to xrandr.
+This code implements auto-rotate functionality by coupling iio-sensor-proxy to xrandr.
 
-## State
-
-Still works perfectly. Last compiled and tested: Dec. 2017.
-
-## Configuration
-
-Install dependencies, for example:
-
-	sudo apt-get install iio-sensor-proxy libxrandr2 libglib2.0-dev
-	
-Just compile and install by running:
-
-	make
-	sudo make install
+This repository contains a Nix flake that exposes a NixOS module that can be used to enable auto-rotate functionality.
 
 ## Usage
 
-To use with systemd (RECOMMENDED):
+Add the following to your flake.nix:
 
-	make config-systemd
-
-To just give it a test run:
-
-	make run
-
-To use with systemV (not tested and fully implemented):
-
-	make config-systemv
-
-## Bugs
-
-### Upstream
-
-There might be mismatches between iio-sensor-proxy and the kernel. I have also experimented with running `iio-sensor-proxy` from source:
-
-	git clone https://github.com/hadess/iio-sensor-proxy
-
-	sudo apt-get install gtk-doc gtk-doc-tools libgudev-1.0-dev libgtk-3-dev
-
-	./autogen.sh 
-	./configure --prefix=/usr --sysconfdir=/etc
-	make "CFLAGS=-Wno-unused-result"
-	sudo make install # sudo checkinstall (my preference)
-
-And run the following as root:
-
-	G_MESSAGES_DEBUG=all /usr/sbin/iio-sensor-proxy
-
-The system package was actually sufficient in my case (1.3-1ubuntu1).
-
-### Initiation
-
-Somehow at my system it only starts working after closing and opening the lid once.
-
-## Tests
-
-Regarding battery use, the auto-rotate daemon is compared to a script (see `/scripts`) that use dbus-monitor in a (blocking) read loop.
-
-Results:
-
-
-| description         | auto-rotate   | dbus-monitor  |
-| ------------------- | ------------- | ------------- |
-| system calls        | 199           | 39284         | 
-| system calls (read) | 6             | 27276    | 
-| cpu (sys)           | 0.01%         | 0.20%         | 
-| cpu (user)          | 0.00%         | 0.04%         | 
-| context switches    | 3.52/sec      | 666.13/sec    | 
-
+```nix
+{
+  inputs = {
+	nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+	xrandr-auto-rotate = {
+	  url = "github:nilp0inter/xrandr-auto-rotate";
+	  inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  };
+  outputs = { self, nixpkgs, xrandr-auto-rotate }: {
+	nixosConfigurations = {
+	  my-hostname = nixpkgs.lib.nixosSystem {
+		system = "x86_64-linux";
+		modules = [
+		  xrandr-auto-rotate.nixosModules.default
+		];
+		config = {
+		  services.xrandr-auto-rotate.enable = true;
+  	    };
+	  };
+	};
+  };
+}
+```
 
 ## Copyrights
 
+The code in this repository is a direct fork of <https://github.com/mrquincle/yoga-900-auto-rotate> modified to work with NixOS.
 This code is created using the example code by Bastien Nocera from the monitor-sensor.c example at <https://github.com/hadess/iio-sensor-proxy>. 
 It is adjusted for auto-rotate functionality on Yoga 900 by Anne van Rossum.
 It is subsequently adjusted on request to rotate any touch device by Anne van Rossum using code from Shih-Yuan Lee at <https://github.com/fourdollars/x11-touchscreen-calibrator>.
 
-Copyright licence: GPLv3.
-
-## Acceptance mainstream
-
-It is reported as tip at https://github.com/hadess/iio-sensor-proxy/issues/129. The author of iio-sensor-proxy assumes a desktop developer should be the person to integrate it. The code in this repository directly uses X through xrandx, so can be used by many desktops as long as they use X. However, I have no clue who I should contact to get a working auto-rotate function the default experience for everyone using Linux on a Yoga 900. Help to get it in into any OS appreciated!
-
+Licence: GPLv3.
