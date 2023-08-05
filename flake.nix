@@ -12,8 +12,8 @@
       let pkgs = nixpkgs.legacyPackages.${system}; in
       {
         packages = rec {
-          auto-rotate = pkgs.stdenv.mkDerivation {
-            name = "auto-rotate";
+          xrandr-auto-rotate = pkgs.stdenv.mkDerivation {
+            name = "xrandr-auto-rotate";
             src = ./.;
             buildInputs = with pkgs; [
               iio-sensor-proxy
@@ -24,34 +24,34 @@
             ];
             installPhase = ''
               mkdir -p $out/bin
-              cp auto-rotate $out/bin
+              cp xrandr-auto-rotate $out/bin
             '';
           };
-          default = auto-rotate;
+          default = xrandr-auto-rotate;
         };
         apps = rec {
-          auto-rotate = flake-utils.lib.mkApp { drv = self.packages.${system}.auto-rotate; };
-          default = auto-rotate;
+          xrandr-auto-rotate = flake-utils.lib.mkApp { drv = self.packages.${system}.xrandr-auto-rotate; };
+          default = xrandr-auto-rotate;
         };
       }
       ) // {
-        nixosModules.auto-rotate = { config, pkgs, lib, ... }: with lib; {
+        nixosModules.xrandr-auto-rotate = { config, pkgs, lib, ... }: with lib; {
           options = {
-            services.auto-rotate = {
-              enable = mkEnableOption "auto-rotate";
+            services.xrandr-auto-rotate = {
+              enable = mkEnableOption "xrandr-auto-rotate";
             };
           };
           config = let
-            cfg = config.services.auto-rotate;
+            cfg = config.services.xrandr-auto-rotate;
           in {
-            systemd.user.services.auto-rotate = mkIf cfg.enable {
+            systemd.user.services.xrandr-auto-rotate = mkIf cfg.enable {
               description = "Autorotation by coupling iio-sensor-proxy with xrandr";
 
               serviceConfig = let
                 pkg = self.packages.${pkgs.system}.default;
               in {
                 Type = "forking";
-                ExecStart = "${pkg}/bin/auto-rotate";
+                ExecStart = "${pkg}/bin/xrandr-auto-rotate";
               };
 
               environment = {
