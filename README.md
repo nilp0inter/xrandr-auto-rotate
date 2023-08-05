@@ -11,25 +11,25 @@ Add the following to your flake.nix:
 ```nix
 {
   inputs = {
-	nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-	xrandr-auto-rotate = {
-	  url = "github:nilp0inter/xrandr-auto-rotate";
-	  inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    xrandr-auto-rotate = {
+      url = "github:nilp0inter/xrandr-auto-rotate";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   };
   outputs = { self, nixpkgs, xrandr-auto-rotate }: {
-	nixosConfigurations = {
-	  my-hostname = nixpkgs.lib.nixosSystem {
-		system = "x86_64-linux";
-		modules = [
-		  xrandr-auto-rotate.nixosModules.default
-		];
-		config = {
-		  services.xrandr-auto-rotate.enable = true;
-  	    };
-	  };
-	};
+    nixosConfigurations = {
+      my-hostname = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          xrandr-auto-rotate.nixosModules.default
+        ];
+        config = {
+          services.xrandr-auto-rotate.enable = true;
+        };
+      };
+    };
   };
 }
 ```
