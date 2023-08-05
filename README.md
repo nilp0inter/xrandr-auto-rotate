@@ -17,7 +17,6 @@ Add the following to your flake.nix:
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  };
   outputs = { self, nixpkgs, xrandr-auto-rotate }: {
     nixosConfigurations = {
       my-hostname = nixpkgs.lib.nixosSystem {
