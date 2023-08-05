@@ -29,10 +29,6 @@
           };
           default = xrandr-auto-rotate;
         };
-        apps = rec {
-          xrandr-auto-rotate = flake-utils.lib.mkApp { drv = self.packages.${system}.xrandr-auto-rotate; };
-          default = xrandr-auto-rotate;
-        };
       }
       ) // {
         nixosModules = rec {
