@@ -39,6 +39,11 @@
           options = {
             services.xrandr-auto-rotate = {
               enable = mkEnableOption "xrandr-auto-rotate";
+              display = mkOption {
+                type = types.str;
+                default = ":0";
+                description = "The X display to use";
+              };
             };
           };
           config = let
@@ -55,7 +60,7 @@
               };
 
               environment = {
-                DISPLAY = ":0";
+                DISPLAY = cfg.display;
               };
 
               wantedBy = [ "graphical-session.target" ];
