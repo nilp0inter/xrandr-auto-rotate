@@ -25,6 +25,7 @@ Add the following to your flake.nix:
           xrandr-auto-rotate.nixosModules.default
         ];
         config = {
+          hardware.sensor.iio.enable = true;
           services.xrandr-auto-rotate.enable = true;
         };
       };
