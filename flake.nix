@@ -17,8 +17,8 @@
             src = ./.;
             buildInputs = with pkgs; [
               iio-sensor-proxy
-              xorg.libXrandr
-              xorg.libXi
+              libxrandr
+              libxi
               glib
               pkg-config
             ];
@@ -50,7 +50,7 @@
                 description = "Autorotation by coupling iio-sensor-proxy with xrandr";
 
                 serviceConfig = let
-                  pkg = self.packages.${pkgs.system}.default;
+                  pkg = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
                 in {
                   Type = "forking";
                   ExecStart = "${pkg}/bin/xrandr-auto-rotate";
